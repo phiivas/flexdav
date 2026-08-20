@@ -47,9 +47,9 @@ Related, in case one of them suits you better:
   re-shares libraries shared with you to other users on your own server, as a
   browsable HTTP directory listing through OpenResty with a Python backend. An
   index to browse, rather than a filesystem to mount and union.
-- **Reaparr**, which downloads from a shared library and keeps a second copy.
-  That is the model this was built as an alternative to: here nothing is stored
-  and reads are proxied on demand.
+- [Reaparr](https://github.com/Reaparr/Reaparr), which downloads from a shared
+  library and keeps a second copy. That is the model this was built as an
+  alternative to: here nothing is stored and reads are proxied on demand.
 
 ## What works
 
@@ -77,16 +77,81 @@ Cold listing time per section, first request after start, cached afterwards:
 | 13,998 items | 7.8 s |
 | 1,833 shows | instant |
 
-## Quick start
+## Install
+
+Three ways, same container underneath. In all of them the port stays on
+`127.0.0.1`: the endpoint hands the whole library to whoever reaches it.
+
+### docker run
 
 ```bash
-git clone https://github.com/phiivas/flexdav.git
-cd flexdav
-docker build -t flexdav:dev .
 cp .env.example .env && chmod 600 .env   # then fill in PLEX_BASE_URL and PLEX_TOKEN
 docker run -d --name flexdav --restart unless-stopped \
-  --env-file .env -p 127.0.0.1:8099:8080 flexdav:dev
+  --env-file .env -p 127.0.0.1:8099:8080 ghcr.io/phiivas/flexdav:latest
 ```
+
+To build it yourself instead of pulling:
+
+```bash
+git clone https://github.com/phiivas/flexdav.git && cd flexdav
+docker build -t flexdav:dev .
+```
+
+### docker compose
+
+`docker-compose.yml` in this repository builds from source by default; switch
+the two commented lines to pull `ghcr.io/phiivas/flexdav:latest` instead.
+
+```bash
+cp .env.example .env && chmod 600 .env
+docker compose up -d
+```
+
+### Unraid
+
+`unraid/flexdav.xml` is a ready template. Put it on the flash drive:
+
+```bash
+curl -o /boot/config/plugins/dockerMan/templates-user/my-flexdav.xml \
+  https://raw.githubusercontent.com/phiivas/flexdav/main/unraid/flexdav.xml
+```
+
+Then Docker, Add Container, and pick **flexdav** from the "Select a template"
+list at the top.
+
+Before starting it, create the settings file the template points at:
+
+```bash
+mkdir -p /mnt/user/appdata/flexdav
+curl -o /mnt/user/appdata/flexdav/.env \
+  https://raw.githubusercontent.com/phiivas/flexdav/main/.env.example
+chmod 600 /mnt/user/appdata/flexdav/.env
+```
+
+and fill in `PLEX_BASE_URL` and `PLEX_TOKEN`.
+
+The template carries no secrets on purpose: templates sit on the flash drive
+in plain text. It also carries no `Variable` entries for the tuning knobs, and
+that is not an oversight. Docker keeps the **last** occurrence of a repeated
+environment variable and template variables are appended after `--env-file`,
+so a template variable sitting at its default silently overrides `.env`. An
+empty `PLEX_SECTIONS` arriving that way means "expose every section". Keep all
+tuning in `.env`.
+
+## About the token
+
+Use the **per-server** token for the library you want to serve, not your Plex
+account token. The account token reaches every server shared with you, and
+whatever it does looks like you to all of them. Write it straight into `.env`,
+never into a shell command line or a URL query string.
+
+Connectivity is checked at startup but not required. Shared servers drop out
+for ten to twenty-five minutes at a time; exiting during one of those windows
+would mean the mount above never comes up either, so an unlucky reboot would
+leave the whole stack dead until somebody noticed. It starts anyway and reads
+retry on their own.
+
+## First check
 
 Check it by hand before mounting anything:
 
@@ -99,19 +164,6 @@ Range support is what makes playback seekable, so confirm a 206 comes back:
 ```bash
 curl -u plex:change-me -r 0-1023 -o /dev/null -D - 'http://127.0.0.1:8099/Movies/'
 ```
-
-### About the token
-
-Use the **per-server** token for the library you want to serve, not your Plex
-account token. The account token reaches every server shared with you, and
-whatever it does looks like you to all of them. Write it straight into `.env`,
-never into a shell command line or a URL query string.
-
-Connectivity is checked at startup but not required. Shared servers drop out
-for ten to twenty-five minutes at a time; exiting during one of those windows
-would mean the mount above never comes up either, so an unlucky reboot would
-leave the whole stack dead until somebody noticed. It starts anyway and reads
-retry on their own.
 
 ## Configuration
 

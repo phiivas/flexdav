@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>flexdav</Name>
+  <Repository>ghcr.io/phiivas/flexdav:latest</Repository>
+  <Registry>https://github.com/phiivas/flexdav/pkgs/container/flexdav</Registry>
+  <Network>bridge</Network>
+  <MyIP/>
+  <MyMAC/>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/phiivas/flexdav/issues</Support>
+  <Project>https://github.com/phiivas/flexdav</Project>
+  <TemplateURL>https://raw.githubusercontent.com/phiivas/flexdav/main/unraid/flexdav.xml</TemplateURL>
+  <ReadMe>https://github.com/phiivas/flexdav#readme</ReadMe>
+  <Overview>A read-only WebDAV bridge in front of a remote media server. Works with Plex. Mount it with rclone and union it with a writable local folder through mergerfs; no copy of the media is kept, reads are proxied upstream as HTTP range requests.&#13;
+&#13;
+SETUP: create /mnt/user/appdata/flexdav/.env from .env.example in the repository, chmod 600, and put PLEX_BASE_URL and PLEX_TOKEN in it. The token belongs in that file and nowhere else. Templates live on the flash drive in plain text, which is why this one carries no secrets.&#13;
+&#13;
+The port is bound in Extra Parameters rather than as a Port mapping, so it stays on 127.0.0.1. The endpoint exposes the entire library to anyone who can reach it, so do not publish it to the LAN.</Overview>
+  <Category>MediaApp:Video Tools:Utilities</Category>
+  <WebUI/>
+  <Icon/>
+  <ExtraParams>--env-file /mnt/user/appdata/flexdav/.env -p 127.0.0.1:8099:8080 --restart unless-stopped</ExtraParams>
+  <PostArgs/>
+  <CPUset/>
+  <DonateText/>
+  <DonateLink/>
+  <Requires>An rclone mount pointed at http://127.0.0.1:8099, and mergerfs if you want a writable branch beside the remote media.</Requires>
+  <!-- Deliberately no <Variable> entries for PLEX_STREAMS, PLEX_CHUNK_MIB,
+       PLEX_SECTIONS and friends. Docker keeps the LAST occurrence of a
+       repeated environment variable, and template variables are appended
+       AFTER --env-file, so a template variable left at its default silently
+       overrides .env. An empty PLEX_SECTIONS that way means "expose every
+       section", which is how one of these once walked a provider's entire
+       catalogue. Keep all tuning in .env, in one place. -->
+</Container>

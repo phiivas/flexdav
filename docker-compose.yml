@@ -1,0 +1,16 @@
+# docker compose up -d
+#
+# Reads .env from this directory (copy .env.example first, chmod 600).
+# The port is deliberately bound to 127.0.0.1: the endpoint hands the whole
+# library to anyone who can reach it, so it must not be published to the LAN.
+services:
+  flexdav:
+    # Build from source:
+    build: .
+    # Or use the published image instead, and delete the build line above:
+    #image: ghcr.io/phiivas/flexdav:latest
+    container_name: flexdav
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "127.0.0.1:8099:8080"
