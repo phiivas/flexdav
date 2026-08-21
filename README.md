@@ -309,8 +309,13 @@ treat any single run as suspect.
 ## Please be careful with somebody else's server
 
 This is the part that is easy to get wrong, and getting it wrong is not
-recoverable: the owner of the library sees your traffic, and a share can be
-withdrawn without warning.
+recoverable: the owner of the library usually sees your traffic in some form,
+and a share can be withdrawn without warning.
+
+**Use this at your own risk.** It reads a library that belongs to somebody
+else, under rules only that person sets. Nothing here can promise the traffic
+will be welcome, and the licence gives you no warranty of any kind. Read this
+section before you point it at a shared server, not afterwards.
 
 - **A mount reads real bytes.** One wrong rclone flag (chunked reads disabled in
   a way that makes the VFS fetch whole files) turned "Plex is indexing" into
