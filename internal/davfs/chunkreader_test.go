@@ -154,8 +154,8 @@ func TestSeekResetsTheRamp(t *testing.T) {
 	}
 }
 
-// The primary provider drops out for ten to twenty-five minutes at a
-// time, several times a day. When another server holds the identical
+// A shared server can be unreachable for many minutes at a time.
+// When another server holds the identical
 // file, a read must carry on from it instead of hanging.
 func TestReadFallsOverToTheOtherServer(t *testing.T) {
 	const size = 8 << 20

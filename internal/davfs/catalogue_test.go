@@ -29,7 +29,7 @@ type fakeServer struct {
 	sections []fakeSection
 	srv      *httptest.Server
 	// down, when set, makes every request fail, standing in for the
-	// outages one of these providers has several times a day.
+	// outages a shared server can have at any time.
 	down bool
 	// deadSections fail while the rest of the server answers, which is
 	// what an outage part way through a build actually looks like: the
@@ -452,7 +452,7 @@ func TestFileIsReadFromItsOwnServer(t *testing.T) {
 	}
 }
 
-// One provider drops out for ten to twenty-five minutes at a time. When
+// A shared server can be unreachable for many minutes at a time. When
 // that happens the other server's library must still be there: an empty
 // tree is what a scanner reads as "everything was deleted".
 func TestOneServerDownStillExposesTheOther(t *testing.T) {

@@ -64,7 +64,8 @@ hundreds of thousands of items:
 - Real release names, because Plex exposes `Part.file`, which is what Radarr,
   Sonarr and Bazarr parse.
 - Ranged reads return real media: the first bytes of an MKV are `1a45dfa3`.
-  Seeking 10 GB into an 18 GB file returns in about 1.3 s.
+  Seeking ten gigabytes into a file returns at once instead of streaming
+  through everything before it.
 - Two servers at once, either merged into one tree or with one mirrored exactly
   and the other standing in only when it is down.
 - Playback-grade throughput through the full rclone + mergerfs stack once
@@ -73,10 +74,9 @@ hundreds of thousands of items:
 - The whole stack survives a reboot.
 
 The first listing of a section is the slow one; everything after it is served
-from cache. A couple of thousand shows list instantly, tens of thousands of
-films take tens of seconds, and the worst case by far is a large show section:
-one of roughly 24k shows took three times longer than a movie section four
-times its size, because shows are walked title by title while films are not.
+from cache. Cost grows with the number of entries, and show sections are far
+worse than film sections of the same size, because a show has to be walked
+season by season while a film is a single entry.
 
 ## Install
 
@@ -146,11 +146,11 @@ account token. The account token reaches every server shared with you, and
 whatever it does looks like you to all of them. Write it straight into `.env`,
 never into a shell command line or a URL query string.
 
-Connectivity is checked at startup but not required. Shared servers drop out
-for ten to twenty-five minutes at a time; exiting during one of those windows
-would mean the mount above never comes up either, so an unlucky reboot would
-leave the whole stack dead until somebody noticed. It starts anyway and reads
-retry on their own.
+Connectivity is checked at startup but not required, because a remote server
+can be unreachable for minutes at a stretch. Exiting on a failed check would
+mean the mount above it never comes up either, so a reboot during an outage
+would leave the whole stack down until somebody noticed. It starts anyway and
+reads retry on their own.
 
 ## First check
 
@@ -191,10 +191,10 @@ Additional servers use the same names with a number: `PLEX2_BASE_URL`,
 first server to hold a title is the one served, so the numbering is the
 preference order.
 
-Every tuning knob is per server on purpose. The right values turned out to be a
-property of the provider, not a universal answer: one of these wants HTTP/1.1
-and four streams, the other HTTP/2 and eight, and using one server's numbers
-against the other cost most of the throughput.
+Every tuning knob is per server on purpose, because the right values are a
+property of the server rather than a universal answer. One may be fastest on
+HTTP/1.1 with four streams and another on HTTP/2 with eight, and carrying one
+server's numbers over to another can cost most of the throughput.
 
 ### Picking up new content
 
@@ -317,19 +317,19 @@ else, under rules only that person sets. Nothing here can promise the traffic
 will be welcome, and the licence gives you no warranty of any kind. Read this
 section before you point it at a shared server, not afterwards.
 
-- **A mount reads real bytes.** One wrong rclone flag (chunked reads disabled in
-  a way that makes the VFS fetch whole files) turned "Plex is indexing" into
-  1.2 TB pulled in two days, in alphabetical order, which is exactly what a
-  bulk download looks like from the other side. Nothing in the logs said so.
-  Watch the actual byte counters, not the scan progress.
+- **A mount reads real bytes.** One wrong rclone flag, chunked reads disabled
+  in a way that makes the VFS fetch whole files, turns "Plex is indexing" into
+  terabytes pulled in title order, which from the other side is
+  indistinguishable from a bulk download. The logs will not say so. Watch the
+  byte counters, not the scan progress.
 - **Do not let Plex index through the mount.** Opening every remote file to
   probe its codec is enormously expensive for the provider and slow for you. A
   much better shape is to read the remote server's own index over the API,
   build a local tree of sparse placeholder files with the correct names and
   sizes, let Plex scan those off local disk, and import codec, resolution and
-  bitrate from the API rather than probing the files. A section that took about
-  28 hours through the mount then builds in minutes, with zero file opens
-  against the provider.
+  bitrate from the API rather than probing the files. A section that needs many
+  hours through the mount can then build in minutes, with no file opens at all
+  against the server.
 - **Rate limit yourself.** Two requests per second against a shared server is
   polite. The listing paths here page at 1000 items per request precisely so
   that a large library costs tens of requests rather than tens of thousands.

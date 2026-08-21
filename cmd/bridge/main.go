@@ -90,7 +90,7 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	// Reaching Plex is checked, not required. These providers drop out
-	// for ten to twenty-five minutes at a time, and refusing to start
+	// unreachable for many minutes at a time, and refusing to start
 	// during one of those windows is worse than serving errors: the
 	// mount above never comes up either, so a reboot at an unlucky
 	// moment leaves the whole stack dead until a human notices. Reads

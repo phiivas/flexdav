@@ -36,7 +36,7 @@ const (
 	// may have before the listing is called a failure rather than a gap.
 	maxSkips = 50
 
-	// dialTimeout bounds connection setup. Both providers sit behind
+	// dialTimeout bounds connection setup. Shared servers usually sit behind
 	// links with round trips around 200ms, so a healthy dial is well
 	// under a second; anything past this is an outage, not slowness.
 	dialTimeout = 15 * time.Second
@@ -55,17 +55,13 @@ func NewClient(baseURL, token string) *Client {
 }
 
 // NewClientHTTP2 allows HTTP/2. Which protocol is faster turns out to be
-// a property of the provider, not a universal answer, and the difference
-// is not small. Measured with 32 MiB ranged reads, fresh
-// connection each time:
-//
-//	                 HTTP/2   HTTP/1.1
-//	provider A        18.3      2.7     MB/s
-//
-// Seven to one. Against the other provider the opposite held: HTTP/2
-// multiplexed all four chunk fetches onto one TCP connection and made the
-// read pipeline parallel in name only. So this is a per-server switch,
-// and neither setting is a safe default for an unknown server. Measure.
+// a property of the server, not a universal answer, and the difference is
+// not small. Measured with 32 MiB ranged reads and a fresh connection each
+// time, one server carried about seven times as much over HTTP/2 as over
+// HTTP/1.1. On another the opposite held: HTTP/2 multiplexed all four chunk
+// fetches onto one TCP connection and made the read pipeline parallel in
+// name only. So this is a per-server switch, and neither setting is a safe
+// default for an unknown server. Measure.
 func NewClientHTTP2(baseURL, token string) *Client {
 	return newClient(baseURL, token, true)
 }
@@ -115,8 +111,8 @@ func newClient(baseURL, token string, http2 bool) *Client {
 				TLSNextProto:    nextProto,
 				// Some providers throttle a connection by how much it has
 				// already delivered, so reuse is a penalty rather than a
-				// saving: 21.6 MB/s reused against 30.4 MB/s fresh,
-				// measured. Off by default because a fresh TLS
+				// saving: a reused connection measured about a third
+				// slower than a fresh one. Off by default because a fresh TLS
 				// handshake per chunk is real cost on a high-latency link.
 				DisableKeepAlives: noKeepAlive,
 			},

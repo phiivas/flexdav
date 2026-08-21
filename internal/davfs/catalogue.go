@@ -446,7 +446,7 @@ func (fs *FS) buildCatalogue(ctx context.Context) (*catalogue, error) {
 
 	// What the previous attempt managed to list, or nil on the first one.
 	// A full build takes about half an hour against libraries this size
-	// and the primary drops out several times a day, so an attempt that
+	// and a source can drop out at any moment, so an attempt that
 	// starts clean and dies two thirds of the way through is the ordinary
 	// case rather than the rare one. Reusing what it did get is what
 	// makes the first catalogue reachable at all; without it, every
@@ -508,8 +508,8 @@ func (fs *FS) buildCatalogue(ctx context.Context) (*catalogue, error) {
 		sections, err := s.Client.ListSections(ctx)
 		if err != nil {
 			// One server being down must not stop the other from being
-			// exposed. This provider drops out for ten to twenty-five
-			// minutes several times a day; refusing to build would mean
+			// exposed. A shared server can be unreachable for many minutes
+			// at a stretch; refusing to build would mean
 			// the whole mount is empty for that whole window.
 			log.Printf("flexdav: %s: cannot list sections: %v", s.Name, err)
 			if firstErr == nil {

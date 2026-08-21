@@ -68,7 +68,7 @@ func twoSectionServer(t *testing.T) *fakeServer {
 
 // A build that dies part way through must not throw away what it already
 // listed. Against the real library a full build takes about half an hour
-// and the primary drops out several times a day, so a build interrupted
+// and a source can drop out at any moment, so a build interrupted
 // two thirds of the way through is ordinary. Before this, each outage
 // discarded the whole half hour, and after two of them in a row nothing
 // had ever been published at all.

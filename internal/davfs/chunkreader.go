@@ -29,21 +29,21 @@ type readSource struct {
 // Do not trust any single measurement against this CDN. Two runs of the
 // same parallel-curl test, hours apart:
 //
-//	streams    morning    night
-//	      1     37-47      76.9
-//	      4      66.7      25.3
-//	      8      48.3      91.8
-//	     16      18.5      65.1
-//	     32         -      95.3
+//	streams     run A     run B      (each scaled to its own 1 stream)
+//	      1      1.00      1.00
+//	      4      1.59      0.33
+//	      8      1.15      1.19
+//	     16      0.44      0.85
+//	     32         -      1.24
 //
-// The morning run looked like a clean peak at four streams and was read
-// that way. The night run has a single stream beating four. The provider
+// The first run looked like a clean peak at four streams and was read
+// that way. The second has a single stream beating four. A server
 // varies by more than the thing being measured, so the ranking was noise.
 // Four is kept because it is unrefuted and matches Reaparr, not because
 // it was ever demonstrated to be optimal.
 //
-// What did hold up: with one reader the bridge delivers 66.9 MB/s against
-// 76.9 direct, so this pipeline costs about 13%. The mount on top was the
+// What did hold up: with one reader the bridge delivers about 87% of a
+// direct read, so this pipeline costs about 13%. The mount on top was the
 // expensive layer, not this.
 //
 // Chunk sizes ramp from small to large after every restart, so a seek
@@ -82,8 +82,8 @@ type chunkFuture struct {
 // newChunkReader builds the read pipeline over one or more copies of the
 // same file.
 //
-// Fallbacks exist because the primary provider drops out for ten to
-// twenty-five minutes at a time, several times a day, and during those
+// Fallbacks exist because a shared server can go unreachable for many
+// minutes at a time, and during those
 // windows an open simply hangs: measured, thirty seconds
 // without a byte and without an error.
 //
@@ -187,13 +187,13 @@ func (r *chunkReader) chunkSize() int64 {
 // fetched about 15 MiB per open (1+2+4+8 MiB, since chunk sizes ramp),
 // twice over because the seek to the end restarts the pipeline. Plex
 // needed 320 KB per film and the bridge pulled 75 MB: 240x amplification,
-// measured while scanning a 900-film library.
+// measured while scanning a library of a few hundred films.
 //
 // The threshold has to be small. An earlier version opened the width one
 // chunk at a time, which starved playback: rclone issues a fresh ranged
 // GET per VFS chunk, every GET restarts the pipeline, and a pipeline that
 // starts one chunk wide moves one chunk per round trip. Throughput fell
-// under 1 MB/s and Plex hung outright. One chunk of evidence is enough,
+// to a trickle and Plex hung outright. One chunk of evidence is enough,
 // so full width arrives after the first one.
 func (r *chunkReader) width() int {
 	if r.servedBytes >= firstChunkSize {

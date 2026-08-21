@@ -234,11 +234,11 @@ func (fs *FS) Build(ctx context.Context) error {
 	// short catalogue does not read as "a server is down" to the scanner
 	// above: it reads as the missing titles having been deleted.
 	//
-	// This is not hypothetical. Once, the primary was unreachable
-	// for a whole build, mirrored mode meant its sections were the only
-	// ones, and the result published cleanly as "0 sections, 0 titles"
-	// while the local Plex hammered the mount for files the bridge had
-	// just started denying.
+	// This is not hypothetical. With a source unreachable for a whole
+	// build, and mirrored mode meaning its sections are the only ones,
+	// the result publishes cleanly as "0 sections, 0 titles" while the
+	// local Plex hammers the mount for files the bridge has just started
+	// denying.
 	if c.partial {
 		if prev := fs.cat.get(); prev != nil {
 			log.Printf("flexdav: build reached %d sections and %d titles but a server was unreachable; keeping the previous %d and %d",
