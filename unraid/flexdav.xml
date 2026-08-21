@@ -19,7 +19,7 @@ SETUP: create /mnt/user/appdata/flexdav/.env from .env.example in the repository
 The port is bound in Extra Parameters rather than as a Port mapping, so it stays on 127.0.0.1. The endpoint exposes the entire library to anyone who can reach it, so do not publish it to the LAN.</Overview>
   <Category>MediaApp:Video Tools:Utilities</Category>
   <WebUI/>
-  <Icon/>
+  <Icon>https://raw.githubusercontent.com/phiivas/flexdav/main/unraid/flexdav.png</Icon>
   <ExtraParams>--env-file /mnt/user/appdata/flexdav/.env -p 127.0.0.1:8099:8080 --restart unless-stopped</ExtraParams>
   <PostArgs/>
   <CPUset/>

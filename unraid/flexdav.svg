@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#28304a"/>
+      <stop offset="1" stop-color="#151925"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="url(#bg)"/>
+  <!-- the span over to the other server; its crown hides behind the deck -->
+  <path d="M166 388 V258 A90 90 0 0 1 346 258 V388"
+        fill="none" stroke="#4fd1c5" stroke-width="36" stroke-linecap="round"/>
+  <!-- the deck: the tree you mount -->
+  <rect x="52" y="150" width="408" height="38" rx="15" fill="#e6edf3"/>
+  <!-- what travels across it -->
+  <path d="M226 252 L312 302 L226 352 Z" fill="#f6c352"/>
+</svg>

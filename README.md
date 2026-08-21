@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="unraid/flexdav.png" width="96" alt="">
+</p>
+
 # flexdav
 
 A read-only WebDAV bridge in front of a remote media server. Works with Plex.
