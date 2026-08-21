@@ -219,11 +219,11 @@ instead of ten minutes.
 ## Mounting
 
 ```bash
-rclone config create plexdav webdav url http://127.0.0.1:8099 vendor other user plex pass change-me
+rclone config create flexdav webdav url http://127.0.0.1:8099 vendor other user plex pass change-me
 ```
 
 ```bash
-rclone mount plexdav: /mnt/mounts/plexdav --read-only --allow-other \
+rclone mount flexdav: /mnt/mounts/flexdav --read-only --allow-other \
   --dir-cache-time 24h --poll-interval 0 \
   --vfs-cache-mode full --cache-dir /var/cache/rclone \
   --vfs-cache-max-size 50G --vfs-cache-max-age 24h \
@@ -239,7 +239,7 @@ without a cache every seek becomes a fresh request.
 
 ```bash
 mergerfs -o allow_other,category.create=ff,func.getattr=newest,cache.files=partial,dropcacheonclose=true,minfreespace=0,fsname=plexmerged \
-  /mnt/mounts/plexdav=RO:/mnt/data/subs=RW /mnt/mounts/merged
+  /mnt/mounts/flexdav=RO:/mnt/data/subs=RW /mnt/mounts/merged
 ```
 
 `category.create=ff` only considers branches that allow creation, so every
