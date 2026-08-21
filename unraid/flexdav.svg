@@ -6,11 +6,22 @@
     </linearGradient>
   </defs>
   <rect width="512" height="512" rx="96" fill="url(#bg)"/>
-  <!-- the span over to the other server; its crown hides behind the deck -->
-  <path d="M166 388 V258 A90 90 0 0 1 346 258 V388"
-        fill="none" stroke="#4fd1c5" stroke-width="36" stroke-linecap="round"/>
-  <!-- the deck: the tree you mount -->
-  <rect x="52" y="150" width="408" height="38" rx="15" fill="#e6edf3"/>
-  <!-- what travels across it -->
-  <path d="M226 252 L312 302 L226 352 Z" fill="#f6c352"/>
+
+  <!-- the library that lives somewhere else -->
+  <g fill="#4fd1c5">
+    <circle cx="152" cy="126" r="30"/>
+    <circle cx="188" cy="110" r="40"/>
+    <circle cx="224" cy="130" r="27"/>
+    <rect x="142" y="128" width="94" height="32" rx="16"/>
+  </g>
+  <path d="M188 160 V296" stroke="#4fd1c5" stroke-width="22" stroke-linecap="butt"/>
+
+  <!-- the local branch: real bytes on your own disk -->
+  <rect x="292" y="92" width="76" height="68" rx="16" fill="#f6c352"/>
+  <path d="M330 150 V296" stroke="#f6c352" stroke-width="22" stroke-linecap="butt"/>
+
+  <!-- one tree, both branches in it -->
+  <rect x="120" y="262" width="104" height="40" rx="14" fill="#e6edf3"/>
+  <rect x="120" y="292" width="272" height="148" rx="24" fill="#e6edf3"/>
+  <path d="M236 334 L308 366 L236 398 Z" fill="#1a1f2e"/>
 </svg>
