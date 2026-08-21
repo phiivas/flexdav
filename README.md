@@ -15,8 +15,8 @@ A library that is shared with you becomes an ordinary directory tree that any
 tool can read.
 
 ```
-/Movies - 4K/The Matrix (1999) Bluray-2160p.mkv
-/TV Shows/Yellowstone/Season 3/Yellowstone - S03E07.mkv
+/Movies/The Cartographer (2018) Bluray-1080p x264-GRP.mkv
+/TV Shows/Harbour Lights/Season 2/Harbour Lights - S02E04.mkv
 ```
 
 ## Why

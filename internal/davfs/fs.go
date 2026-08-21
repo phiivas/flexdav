@@ -4,8 +4,8 @@
 //
 // The exposed tree mirrors Plex's own hierarchy:
 //
-//	/Movies - 4K/The Matrix (1999) Bluray-2160p.mkv
-//	/TV Shows - 4K/Yellowstone/Season 3/Yellowstone - S03E07.mkv
+//	/Movies/The Cartographer (2018) Bluray-1080p x264-GRP.mkv
+//	/TV Shows/Harbour Lights/Season 2/Harbour Lights - S02E04.mkv
 //
 // Naming invariant: listing a directory and looking a child up by name
 // both go through buildEntries, so whatever Readdir reports is exactly
