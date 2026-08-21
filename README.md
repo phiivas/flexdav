@@ -375,6 +375,11 @@ docker run --rm -v "$PWD":/src -w /src \
 
 MIT, see [LICENSE](LICENSE).
 
+The icon is the "Bridge at night" emoji from
+[Microsoft Fluent Emoji](https://github.com/microsoft/fluentui-emoji), used
+under the MIT license; its notice is kept in
+[unraid/ICON-LICENSE](unraid/ICON-LICENSE).
+
 ---
 
 Written with [Claude Code](https://claude.com/claude-code) (Opus 5).
