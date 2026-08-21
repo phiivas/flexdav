@@ -2,7 +2,7 @@
   <img src="unraid/flexdav.png" width="96" alt="">
 </p>
 
-# flexdav
+# FlexDav
 
 A read-only WebDAV bridge in front of a remote media server. Works with Plex.
 
@@ -117,7 +117,7 @@ curl -o /boot/config/plugins/dockerMan/templates-user/my-flexdav.xml \
   https://raw.githubusercontent.com/phiivas/flexdav/main/unraid/flexdav.xml
 ```
 
-Then Docker, Add Container, and pick **flexdav** from the "Select a template"
+Then Docker, Add Container, and pick **FlexDav** from the "Select a template"
 list at the top.
 
 Before starting it, create the settings file the template points at:

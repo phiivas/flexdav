@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <Container version="2">
-  <Name>flexdav</Name>
+  <Name>FlexDav</Name>
   <Repository>ghcr.io/phiivas/flexdav:latest</Repository>
   <Registry>https://github.com/phiivas/flexdav/pkgs/container/flexdav</Registry>
   <Network>bridge</Network>
