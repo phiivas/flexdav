@@ -29,7 +29,7 @@ The port is bound in Extra Parameters rather than as a Port mapping, so it stays
   <!-- Deliberately no <Variable> entries for PLEX_STREAMS, PLEX_CHUNK_MIB,
        PLEX_SECTIONS and friends. Docker keeps the LAST occurrence of a
        repeated environment variable, and template variables are appended
-       AFTER --env-file, so a template variable left at its default silently
+       AFTER the env file, so a template variable left at its default silently
        overrides .env. An empty PLEX_SECTIONS that way means "expose every
        section", which is how one of these once walked a provider's entire
        catalogue. Keep all tuning in .env, in one place. -->
