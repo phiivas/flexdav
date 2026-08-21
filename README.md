@@ -72,16 +72,11 @@ hundreds of thousands of items:
   [Throughput](#throughput).
 - The whole stack survives a reboot.
 
-Cold listing time per section, first request after start, cached afterwards.
-One server answering over one link, so read the curve, not the seconds:
-
-| Section size | Cold listing |
-|---|---|
-| ~100k items | 57.6 s |
-| ~47k items | 41.0 s |
-| ~24k shows | 198.2 s |
-| ~14k items | 7.8 s |
-| ~2k shows | instant |
+The first listing of a section is the slow one; everything after it is served
+from cache. A couple of thousand shows list instantly, tens of thousands of
+films take tens of seconds, and the worst case by far is a large show section:
+one of roughly 24k shows took three times longer than a movie section four
+times its size, because shows are walked title by title while films are not.
 
 ## Install
 
@@ -260,54 +255,52 @@ at the far end decide the absolute numbers, and none of those are properties
 of this program. What carries over to another setup is the ordering: which
 layer costs what, and which setting beats which.
 
-Measured with 256 MB reads, one layer added at a time:
+Measured with 256 MB reads, one layer added at a time, each row against a
+direct connection to the same server:
 
-| Path | MB/s |
+| Path | Relative |
 |---|---|
-| Direct to the provider, one connection | 76.9 |
-| Through the bridge (curl, no mount) | 66.9 |
-| Through rclone alone | 21.6 |
-| Through rclone + mergerfs | 18.6 |
+| Direct to the provider, one connection | 1.00 |
+| Through the bridge (curl, no mount) | 0.87 |
+| Through rclone alone | 0.28 |
+| Through rclone + mergerfs | 0.24 |
 
 The bridge costs about 13 %. mergerfs costs nothing measurable. rclone's VFS
 was eating 3.4x, and turning its chunking off is what got it back:
 
-| rclone setting | MB/s |
+| rclone setting | Relative |
 |---|---|
-| `--vfs-read-chunk-size 32M` | 18.6 |
-| `--vfs-read-chunk-size 128M` | 21.8 |
-| `--vfs-read-ahead 512M` | 19.9 |
-| `--vfs-read-chunk-size 0`, cache off | 52.4 |
-| **`--vfs-read-chunk-size 0`, cache full** | **45-56** |
+| `--vfs-read-chunk-size 32M` | 1.00 |
+| `--vfs-read-chunk-size 128M` | 1.17 |
+| `--vfs-read-ahead 512M` | 1.07 |
+| `--vfs-read-chunk-size 0`, cache off | 2.8 |
+| **`--vfs-read-chunk-size 0`, cache full** | **2.4-3.0** |
 
 Chunking makes rclone issue a fresh ranged GET per chunk, and every one of
 those restarts the bridge's read pipeline from a cold ramp. With chunking off
 it opens one request and streams it.
 
 Chunk size inside the bridge, same files, configs alternated round robin so a
-change in the provider's mood hits all of them equally:
+change in the provider's mood hits all of them equally. Each round is scaled
+to its own 8 MiB run, so only the comparison inside a row means anything:
 
 | Round | 4 x 8 MiB | 4 x 32 MiB | 4 x 64 MiB | 6 x 32 MiB |
 |---|---|---|---|---|
-| 1 | 10.8 | 11.4 | 14.2 | 8.5 |
-| 2 | 18.3 | 32.3 | 41.9 | 11.4 |
-| 3 | 27.2 | 36.6 | 36.3 | 41.7 |
-| 4 | 12.8 | 28.7 | 9.0 | 39.4 |
-| mean | 17.3 | **27.3** | 25.4 | 25.3 |
+| 1 | 1.00 | 1.06 | 1.31 | 0.79 |
+| 2 | 1.00 | 1.77 | 2.29 | 0.62 |
+| 3 | 1.00 | 1.35 | 1.33 | 1.53 |
+| 4 | 1.00 | 2.24 | 0.70 | 3.08 |
+| mean | 1.00 | **1.58** | 1.47 | 1.46 |
 
 32 MiB beat 8 MiB in all four rounds. 64 MiB looks similar on average but has a
 much worse floor: the larger the chunk, the more a single stalled fetch costs,
 because everything behind it waits. More than four streams bought nothing.
 
-HTTP/2 against HTTP/1.1, 32 MiB ranged reads, fresh connection each time:
-
-|  | HTTP/2 | HTTP/1.1 |
-|---|---|---|
-| provider A | 18.3 MB/s | 2.7 MB/s |
-
-Seven to one. Against the other provider the opposite held: HTTP/2 multiplexed
-all four chunk fetches onto one TCP connection and made the read pipeline
-parallel in name only. Neither setting is a safe default for an unknown server.
+HTTP/2 against HTTP/1.1, 32 MiB ranged reads, fresh connection each time: on
+one provider HTTP/2 was **about seven times** faster. Against the other the
+opposite held: HTTP/2 multiplexed all four chunk fetches onto one TCP
+connection and made the read pipeline parallel in name only. Neither setting
+is a safe default for an unknown server.
 Measure yours.
 
 Round-to-round spread is larger than most of the differences being compared, so
