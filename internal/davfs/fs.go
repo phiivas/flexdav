@@ -234,7 +234,7 @@ func (fs *FS) Build(ctx context.Context) error {
 	// short catalogue does not read as "a server is down" to the scanner
 	// above: it reads as the missing titles having been deleted.
 	//
-	// This is not hypothetical. On 2026-08-09 the primary was unreachable
+	// This is not hypothetical. Once, the primary was unreachable
 	// for a whole build, mirrored mode meant its sections were the only
 	// ones, and the result published cleanly as "0 sections, 0 titles"
 	// while the local Plex hammered the mount for files the bridge had

@@ -53,8 +53,8 @@ Related, in case one of them suits you better:
 
 ## What works
 
-Verified against two real shared servers, one of them 16 sections and roughly
-310k items:
+Verified against two real shared servers, one of them sixteen sections and
+hundreds of thousands of items:
 
 - Section listing, per-section filtering, show/season/episode traversal.
 - Real release names, because Plex exposes `Part.file`, which is what Radarr,
@@ -63,19 +63,21 @@ Verified against two real shared servers, one of them 16 sections and roughly
   Seeking 10 GB into an 18 GB file returns in about 1.3 s.
 - Two servers at once, either merged into one tree or with one mirrored exactly
   and the other standing in only when it is down.
-- 45-56 MB/s sustained through the full rclone + mergerfs stack (see
-  [Throughput](#throughput), the tuning matters more than the code).
+- Playback-grade throughput through the full rclone + mergerfs stack once
+  tuned. The rclone flags matter far more than the code does, see
+  [Throughput](#throughput).
 - The whole stack survives a reboot.
 
-Cold listing time per section, first request after start, cached afterwards:
+Cold listing time per section, first request after start, cached afterwards.
+One server answering over one link, so read the curve, not the seconds:
 
 | Section size | Cold listing |
 |---|---|
-| 99,414 items | 57.6 s |
-| 47,237 items | 41.0 s |
-| 24,338 shows | 198.2 s |
-| 13,998 items | 7.8 s |
-| 1,833 shows | instant |
+| ~100k items | 57.6 s |
+| ~47k items | 41.0 s |
+| ~24k shows | 198.2 s |
+| ~14k items | 7.8 s |
+| ~2k shows | instant |
 
 ## Install
 
@@ -247,6 +249,12 @@ write goes to the local branch and the remote one is never touched.
 Point Bazarr, or whatever writes subtitles, at the merged path.
 
 ## Throughput
+
+**Read these as ratios, not as speeds you will get.** Every figure below is one
+setup reading from one server. Bandwidth, latency and the load on the machine
+at the far end decide the absolute numbers, and none of those are properties
+of this program. What carries over to another setup is the ordering: which
+layer costs what, and which setting beats which.
 
 Measured with 256 MB reads, one layer added at a time:
 

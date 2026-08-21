@@ -16,10 +16,10 @@ import (
 // A catalogue is the union of every configured server's libraries with
 // each work appearing exactly once.
 //
-// Why this exists at all. Two shared Plex servers were measured on
-// 2026-08-08: 150,366 unique films on the first, 93,892 on the second,
-// 76,068 of them the same film on both. Exposing the servers separately
-// would make the local Plex index those 76,068 twice, and scanning is by
+// Why this exists at all. Two shared Plex servers were measured: roughly
+// 150,000 unique films on the first, 94,000 on the second, and some 76,000
+// of them the same film on both. Exposing the servers separately
+// would make the local Plex index those 76,000 twice, and scanning is by
 // far the most expensive thing in this project. It would also show them
 // to a viewer as duplicate search results.
 //
@@ -86,7 +86,7 @@ type altCopy struct {
 // show. With the winner gone, the folder does not merely fail to play,
 // it fails to open at all, and a Plex library sitting on a directory
 // that never answers will hold its whole database locked, not just its
-// own section. Measured 2026-08-09: one such library made
+// own section. Seen in practice: one such library made
 // /library/sections stop answering for every client on the server.
 type altBranch struct {
 	src        int

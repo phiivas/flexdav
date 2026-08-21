@@ -27,7 +27,7 @@ type readSource struct {
 // and hands the bytes back in order.
 //
 // Do not trust any single measurement against this CDN. Two runs of the
-// same parallel-curl test, hours apart on 2026-08-07:
+// same parallel-curl test, hours apart:
 //
 //	streams    morning    night
 //	      1     37-47      76.9
@@ -84,7 +84,7 @@ type chunkFuture struct {
 //
 // Fallbacks exist because the primary provider drops out for ten to
 // twenty-five minutes at a time, several times a day, and during those
-// windows an open simply hangs: measured 2026-08-08, thirty seconds
+// windows an open simply hangs: measured, thirty seconds
 // without a byte and without an error.
 //
 // Every source here holds a file of the same byte length, which the
@@ -187,7 +187,7 @@ func (r *chunkReader) chunkSize() int64 {
 // fetched about 15 MiB per open (1+2+4+8 MiB, since chunk sizes ramp),
 // twice over because the seek to the end restarts the pipeline. Plex
 // needed 320 KB per film and the bridge pulled 75 MB: 240x amplification,
-// measured on 2026-08-07 while scanning a 900-film library.
+// measured while scanning a 900-film library.
 //
 // The threshold has to be small. An earlier version opened the width one
 // chunk at a time, which starved playback: rclone issues a fresh ranged

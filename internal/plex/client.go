@@ -56,7 +56,7 @@ func NewClient(baseURL, token string) *Client {
 
 // NewClientHTTP2 allows HTTP/2. Which protocol is faster turns out to be
 // a property of the provider, not a universal answer, and the difference
-// is not small. Measured 2026-08-08 with 32 MiB ranged reads, fresh
+// is not small. Measured with 32 MiB ranged reads, fresh
 // connection each time:
 //
 //	                 HTTP/2   HTTP/1.1
@@ -116,7 +116,7 @@ func newClient(baseURL, token string, http2 bool) *Client {
 				// Some providers throttle a connection by how much it has
 				// already delivered, so reuse is a penalty rather than a
 				// saving: 21.6 MB/s reused against 30.4 MB/s fresh,
-				// measured 2026-08-08. Off by default because a fresh TLS
+				// measured. Off by default because a fresh TLS
 				// handshake per chunk is real cost on a high-latency link.
 				DisableKeepAlives: noKeepAlive,
 			},
@@ -273,7 +273,7 @@ func (c *Client) listPaged(ctx context.Context, path string, guids bool) ([]Item
 			}
 			// The server is alive and refusing this particular window,
 			// every time, in well under a second. One record in it
-			// breaks Plex's own serialiser: measured 2026-08-08, offset
+			// breaks Plex's own serialiser: measured, offset
 			// 96000 size 1000 failed on every attempt while size 200 at
 			// the same offset, and size 1000 at 95000 and 97000, all
 			// succeeded.
