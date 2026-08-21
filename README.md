@@ -83,6 +83,12 @@ season by season while a film is a single entry.
 Three ways, same container underneath. In all of them the port stays on
 `127.0.0.1`: the endpoint hands the whole library to whoever reaches it.
 
+**Where this has actually been run:** one Unraid host, with Docker, the rclone
+plugin and the mergerFS plugin. Nothing in the bridge is tied to Unraid (it is
+a static Go binary in a container, and the mount and union layers are ordinary
+Linux tools), but Unraid is the only place the whole stack has been exercised,
+so treat anything else as untested rather than unsupported.
+
 ### docker run
 
 ```bash
