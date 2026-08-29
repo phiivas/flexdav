@@ -19,6 +19,15 @@ tool can read.
 /TV Shows/Harbour Lights/Season 2/Harbour Lights - S02E04.mkv
 ```
 
+It runs with **your own per-server token**, against a library its owner has
+shared with you, and it is read-only: there is no write path, no second copy of
+anything, and the media itself is never touched. It is a client for the Plex
+HTTP API, in the same sense that Tautulli or plexapi are.
+
+FlexDav is an independent project. It is **not affiliated with, endorsed by or
+sponsored by Plex Inc.**, and it is not a Plex product. "Plex" appears here only
+to name the API it speaks, and is a trademark of its owner.
+
 ## Why
 
 The usual way to use a shared Plex library outside the Plex client is to
@@ -26,34 +35,6 @@ download from it and store a second copy. This does the opposite: one process
 translates the Plex HTTP API into WebDAV, rclone mounts that, and mergerfs
 unions it with a writable local branch so your own subtitles can sit next to
 remote media in a single tree.
-
-## Credit, and what this is not
-
-**The design is not original.** It is the Real-Debrid stack, pointed at a
-different source. [Zurg](https://github.com/debridmediamanager/zurg-testing) by
-yowmamasita exposes Real-Debrid as a WebDAV endpoint, rclone mounts it, mergerfs
-unions it with a writable branch, and Plex scans the result as if it were local
-disk. Thousands of people run that arrangement, which is why it was worth
-copying: the shape is settled, and the interesting question is only whether a
-Plex library shared with you can stand in for the debrid service. It can.
-
-**This is not a fork and contains no code from any of them.** Zurg is
-distributed as binaries rather than source, so there was nothing to copy even in
-principle. Everything here was written from scratch in Go, and the only
-dependency is `golang.org/x/net/webdav` (BSD-3-Clause), which supplies the
-protocol handler. What the Plex side needs turned out to be quite different
-anyway: paging a 99k-item section, per-server transport tuning, and a parallel
-ranged reader that survives a provider dropping mid-file.
-
-Related, in case one of them suits you better:
-
-- [vladiiancu/plex-reshare](https://github.com/vladiiancu/plex-reshare) (MIT):
-  re-shares libraries shared with you to other users on your own server, as a
-  browsable HTTP directory listing through OpenResty with a Python backend. An
-  index to browse, rather than a filesystem to mount and union.
-- [Reaparr](https://github.com/Reaparr/Reaparr), which downloads from a shared
-  library and keeps a second copy. That is the model this was built as an
-  alternative to: here nothing is stored and reads are proxied on demand.
 
 ## What works
 
@@ -374,6 +355,35 @@ docker run --rm -v "$PWD":/src -w /src \
   -e GOFLAGS=-mod=mod -e GOCACHE=/tmp/gocache -e GOMODCACHE=/tmp/gomod \
   golang:1.22-alpine go test ./...
 ```
+
+## Prior art, and what this is not
+
+**The design is not original.** It is the WebDAV + rclone + mergerfs pattern
+established by [Zurg](https://github.com/debridmediamanager/zurg-testing) by
+yowmamasita, pointed at a different kind of source: Zurg exposes a remote
+provider as a WebDAV endpoint, rclone mounts it, mergerfs unions it with a
+writable branch, and a media server scans the result as if it were local disk.
+Thousands of people run that arrangement, which is why it was worth copying:
+the shape is settled, and the only open question here was whether a Plex
+library shared with you can stand in as the source. It can.
+
+**This is not a fork and contains no code from any of them.** Zurg is
+distributed as binaries rather than source, so there was nothing to copy even in
+principle. Everything here was written from scratch in Go, and the only
+dependency is `golang.org/x/net/webdav` (BSD-3-Clause), which supplies the
+protocol handler. What the Plex side needs turned out to be quite different
+anyway: paging a 99k-item section, per-server transport tuning, and a parallel
+ranged reader that survives a provider dropping mid-file.
+
+Related, in case one of them suits you better:
+
+- [vladiiancu/plex-reshare](https://github.com/vladiiancu/plex-reshare) (MIT):
+  re-shares libraries shared with you to other users on your own server, as a
+  browsable HTTP directory listing through OpenResty with a Python backend. An
+  index to browse, rather than a filesystem to mount and union.
+- [Reaparr](https://github.com/Reaparr/Reaparr), which downloads from a shared
+  library and keeps a second copy. That is the model this was built as an
+  alternative to: here nothing is stored and reads are proxied on demand.
 
 ## License
 
